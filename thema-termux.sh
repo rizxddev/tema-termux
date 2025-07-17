@@ -36,12 +36,11 @@ sed -i '/#--- TERMUX PREMIUM HOME START/,/#--- TERMUX PREMIUM HOME END/d' "$BASH
 echo "Instalasi selesai!"
 
 # Tampilkan kotak pesan
-BOX_WIDTH=30
+BOX_WIDTH=60
 echo
 echo "┌$(repeat_char '─' $BOX_WIDTH)┐"
-echo "│ Tekan Enter untuk keluar installer │"
+echo "│ Silakan restart Termux dan jalankan tema dengan perintah: │"
 echo "└$(repeat_char '─' $BOX_WIDTH)┘"
 read -p ""
 
-echo "Silakan restart Termux dan jalankan tema dengan perintah:"
 echo "bash ~/termux-premium-home"
