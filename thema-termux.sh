@@ -43,5 +43,3 @@ echo "│ Enter untuk menjalankan thema │"
 echo "└$(repeat_char '─' $BOX_WIDTH)┘"
 read -p ""
 
-# Jalankan tema utama sekali
-bash "$HOME/$SCRIPT_NAME"
