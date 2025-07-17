@@ -19,7 +19,7 @@ fi
 
 # Clone repo jika belum ada
 if [ ! -d "$REPO_DIR" ]; then
-  git clone https://github.com/yourusername/tema-termux.git "$REPO_DIR"
+  git clone https://github.com/rizxddev/tema-termux.git "$REPO_DIR"
 else
   echo "Repo sudah ada, melakukan update..."
   cd "$REPO_DIR"
