@@ -164,7 +164,7 @@ EOF
       sleep 1
       clear
       # Jangan export PS1 di sini, .bashrc yang akan handle prompt
-      break
+      return 0
       ;;
     *)
       echo "Menu belum tersedia."
