@@ -39,7 +39,9 @@ echo "Instalasi selesai!"
 BOX_WIDTH=30
 echo
 echo "┌$(repeat_char '─' $BOX_WIDTH)┐"
-echo "│ Enter untuk menjalankan thema │"
+echo "│ Tekan Enter untuk keluar installer │"
 echo "└$(repeat_char '─' $BOX_WIDTH)┘"
 read -p ""
 
+echo "Silakan restart Termux dan jalankan tema dengan perintah:"
+echo "bash ~/termux-premium-home"
