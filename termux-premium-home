@@ -1,0 +1,174 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+USERFILE="$HOME/.termuxuser"
+SCRIPTFILE="$HOME/.termux-premium-home"
+BASHRC="$HOME/.bashrc"
+
+load_username() {
+  if [[ -f $USERFILE ]]; then
+    USERNAME=$(cat $USERFILE)
+  else
+    USERNAME="rizx"
+  fi
+}
+
+BOX_WIDTH=58
+
+repeat_char() { 
+  char=$1 
+  num=$2 
+  for ((i=0; i<num; i++)); do 
+    printf "%s" "$char" 
+  done 
+}
+
+print_line() {
+  printf "\e[1;36m╔"
+  repeat_char "═" $((BOX_WIDTH))
+  printf "╗\e[0m\n"
+}
+
+print_footer() {
+  printf "\e[1;36m╚"
+  repeat_char "═" $((BOX_WIDTH))
+  printf "╝\e[0m\n"
+}
+
+print_sep() {
+  printf "\e[1;33m╠"
+  repeat_char "═" $((BOX_WIDTH))
+  printf "╣\e[0m\n"
+}
+
+print_center() {
+  local content="$1"
+  local len=${#content}
+  local padding=$(( (BOX_WIDTH - len) / 2 ))
+  local extra=$(( (BOX_WIDTH - len) % 2 ))
+  printf "\e[1;36m║\e[0m"
+  repeat_char " " $padding
+  printf "\e[1;33m%s\e[0m" "$content"
+  repeat_char " " $((padding + extra))
+  printf "\e[1;36m║\e[0m\n"
+}
+
+print_info() {
+  local label="$1"
+  local value="$2"
+  local text="  $label : $value"
+  local spaces=$((BOX_WIDTH - ${#text}))
+  printf "\e[1;36m║\e[0m%s" "$text"
+  repeat_char " " $spaces
+  printf "\e[1;36m║\e[0m\n"
+}
+
+get_os_info() {
+  ANDROID_VERSION=$(getprop ro.build.version.release)
+  DEVICE_BRAND=$(getprop ro.product.brand)
+  DEVICE_MODEL=$(getprop ro.product.model)
+  OS_NAME="Android $ANDROID_VERSION ($DEVICE_BRAND $DEVICE_MODEL)"
+}
+
+show_menu() {
+  clear
+  load_username
+  get_os_info
+  print_line
+  print_center "TERMUX PREMIUM TERMINAL"
+  print_sep
+  print_info "User" "$USERNAME"
+  print_info "IP" "$(curl -s ifconfig.me)"
+  print_info "OS" "$OS_NAME"
+  print_footer
+  echo "[1] Ganti Username"
+  echo "[2] Ubah warna teks hijau"
+  echo "[3] Reset warna teks default"
+  echo "[4] Jadikan tampilan default"
+  echo "[5] Reset tampilan Termux"
+  echo "[6] Buka terminal biasa"
+  echo
+  printf "%s\$ " "$USERNAME"
+}
+
+while true; do
+  show_menu
+  read -p "Pilih menu: " pilih
+
+  case "$pilih" in
+    1)
+      read -p "Masukkan Username Baru: " USERBARU
+      if [[ -z "$USERBARU" ]]; then
+        echo "Username tidak boleh kosong!"
+        sleep 1
+      else
+        echo "$USERBARU" > $USERFILE
+        echo "Username berhasil diganti menjadi: $USERBARU"
+        sleep 1
+      fi
+      ;;
+    2)
+      # Hapus dulu setting lama agar tidak dobel
+      sed -i '/#--- TERMUX HIJAU START/,/#--- TERMUX HIJAU END/d' "$BASHRC"
+      # Tambahkan setting hijau di .bashrc
+      cat <<EOF >> "$BASHRC"
+#--- TERMUX HIJAU START
+if [[ -f \$HOME/.termuxuser ]]; then
+  export USERNAME=\$(cat \$HOME/.termuxuser)
+else
+  export USERNAME="rizx"
+fi
+export PS1="\\[\\e[1;32m\\]┗━━━❖\${USERNAME}\\[\\e[0m\\]\\$ "
+echo -e "\\e[32m"
+#--- TERMUX HIJAU END
+EOF
+      echo "Warna hijau otomatis akan aktif tiap buka Termux!"
+      sleep 2
+      ;;
+    3)
+      # Hapus setting hijau di .bashrc
+      sed -i '/#--- TERMUX HIJAU START/,/#--- TERMUX HIJAU END/d' "$BASHRC"
+      echo "Warna teks sudah di-reset ke default."
+      sleep 2
+      ;;
+    4)
+      SCRIPT_SOURCE="$0"
+      if [[ "$SCRIPT_SOURCE" == "bash" || "$SCRIPT_SOURCE" == "-bash" || ! -f "$SCRIPT_SOURCE" ]]; then
+          SCRIPT_SOURCE="$HOME/.termux-premium-home"
+          if ! [[ -f "$SCRIPT_SOURCE" ]]; then
+            echo "Script tidak ditemukan (jalankan script dari file)."
+            sleep 2
+          fi
+      fi
+      cp "$SCRIPT_SOURCE" "$SCRIPTFILE"
+      sed -i '/#--- TERMUX PREMIUM HOME START/,/#--- TERMUX PREMIUM HOME END/d' "$BASHRC"
+      cat <<EOF >> "$BASHRC"
+#--- TERMUX PREMIUM HOME START
+if [ -f \$HOME/.termux-premium-home ]; then
+  bash \$HOME/.termux-premium-home
+  exit
+fi
+#--- TERMUX PREMIUM HOME END
+EOF
+      echo "Tampilan premium akan otomatis muncul tiap buka Termux!"
+      sleep 2
+      ;;
+    5)
+      sed -i '/#--- TERMUX PREMIUM HOME START/,/#--- TERMUX PREMIUM HOME END/d' "$BASHRC"
+      [ -f "$SCRIPTFILE" ] && rm "$SCRIPTFILE"
+      [ -f "$USERFILE" ] && rm "$USERFILE"
+      echo "Tampilan premium sudah di-reset."
+      sleep 2
+      ;;
+    6)
+      echo "Keluar ke terminal biasa..."
+      sleep 1
+      clear
+      # Jangan export PS1 di sini, .bashrc yang akan handle prompt
+      break
+      ;;
+    *)
+      echo "Menu belum tersedia."
+      sleep 1
+      ;;
+  esac
+done
