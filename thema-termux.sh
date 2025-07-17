@@ -30,9 +30,11 @@ fi
 cp "$REPO_DIR/$SCRIPT_NAME" "$HOME/"
 chmod +x "$HOME/$SCRIPT_NAME"
 
-# Pasang auto run di .bashrc
+# Pasang auto run di .bashrc tanpa duplikasi
 sed -i '/#--- TERMUX PREMIUM HOME START/,/#--- TERMUX PREMIUM HOME END/d' "$BASHRC"
-cat <<EOF >> "$BASHRC"
+
+if ! grep -q "#--- TERMUX PREMIUM HOME START" "$BASHRC"; then
+  cat <<EOF >> "$BASHRC"
 #--- TERMUX PREMIUM HOME START
 if [ -f \$HOME/$SCRIPT_NAME ]; then
   bash \$HOME/$SCRIPT_NAME
@@ -40,6 +42,7 @@ if [ -f \$HOME/$SCRIPT_NAME ]; then
 fi
 #--- TERMUX PREMIUM HOME END
 EOF
+fi
 
 echo "Instalasi selesai!"
 
