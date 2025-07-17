@@ -30,19 +30,8 @@ fi
 cp "$REPO_DIR/$SCRIPT_NAME" "$HOME/"
 chmod +x "$HOME/$SCRIPT_NAME"
 
-# Pasang auto run di .bashrc tanpa duplikasi
+# Hapus auto run di .bashrc supaya tema tidak jalan otomatis
 sed -i '/#--- TERMUX PREMIUM HOME START/,/#--- TERMUX PREMIUM HOME END/d' "$BASHRC"
-
-if ! grep -q "#--- TERMUX PREMIUM HOME START" "$BASHRC"; then
-  cat <<EOF >> "$BASHRC"
-#--- TERMUX PREMIUM HOME START
-if [ -f \$HOME/$SCRIPT_NAME ]; then
-  bash \$HOME/$SCRIPT_NAME
-  exit
-fi
-#--- TERMUX PREMIUM HOME END
-EOF
-fi
 
 echo "Instalasi selesai!"
 
@@ -54,5 +43,5 @@ echo "│ Enter untuk menjalankan thema │"
 echo "└$(repeat_char '─' $BOX_WIDTH)┘"
 read -p ""
 
-# Jalankan tema utama
+# Jalankan tema utama sekali
 bash "$HOME/$SCRIPT_NAME"
