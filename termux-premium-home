@@ -107,10 +107,12 @@ while true; do
       fi
       ;;
     2)
-      # Hapus dulu setting lama agar tidak dobel
-      sed -i '/#--- TERMUX HIJAU START/,/#--- TERMUX HIJAU END/d' "$BASHRC"
-      # Tambahkan setting hijau di .bashrc
-      cat <<EOF >> "$BASHRC"
+  # Hapus dulu setting lama agar tidak dobel
+  sed -i '/#--- TERMUX HIJAU START/,/#--- TERMUX HIJAU END/d' "$BASHRC"
+  sed -i '/#--- TERMUX COLOR OUTPUT START/,/#--- TERMUX COLOR OUTPUT END/d' "$BASHRC"
+
+  # Tambahkan setting hijau di .bashrc
+  cat <<EOF >> "$BASHRC"
 #--- TERMUX HIJAU START
 if [[ -f \$HOME/.termuxuser ]]; then
   export USERNAME=\$(cat \$HOME/.termuxuser)
@@ -120,10 +122,18 @@ fi
 export PS1="\\[\\e[1;32m\\]┗━━━❖\${USERNAME}\\[\\e[0m\\]\\$ "
 echo -e "\\e[32m"
 #--- TERMUX HIJAU END
+
+#--- TERMUX COLOR OUTPUT START
+export TERM=xterm-256color
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+#--- TERMUX COLOR OUTPUT END
 EOF
-      echo "Warna hijau otomatis akan aktif tiap buka Termux!"
-      sleep 2
-      ;;
+  echo "Warna prompt dan output terminal akan aktif tiap buka Termux!"
+  sleep 2
+  ;;
     3)
       # Hapus setting hijau di .bashrc
       sed -i '/#--- TERMUX HIJAU START/,/#--- TERMUX HIJAU END/d' "$BASHRC"
